@@ -1,6 +1,7 @@
 from customtkinter import *
 from harel_pension import HarelPensionScraper
 from meitav_pension import MeitavPensionScraper
+from altshuler_shaham_pension import AltshulerShahamPensionScraper
 import time
 
 
@@ -28,7 +29,7 @@ def main():
     result_label.pack(pady=10, padx=10, expand=True)
 
     my_combo = CTkComboBox(master=root, state="readonly", hover=False)
-    my_combo.configure(values=["Harel", "Meitav"])
+    my_combo.configure(values=["Harel", "Meitav", "Altshuler Shaham"])
     my_combo.pack(pady=10, padx=10, expand=True)
 
     def rtl_wrap(text):
@@ -49,6 +50,8 @@ def main():
                     scraper = HarelPensionScraper()
                 elif my_combo.get() == "Meitav":
                     scraper = MeitavPensionScraper()
+                elif my_combo.get() == "Altshuler Shaham":
+                    scraper = AltshulerShahamPensionScraper()
                 else:
                     result_label.configure(text=rtl_wrap("Please select a pension provider."))
                     return
