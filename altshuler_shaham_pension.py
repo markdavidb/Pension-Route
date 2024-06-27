@@ -37,12 +37,20 @@ def load_links_from_file(filename="pension_links.json", max_age_days=7):
     return None
 
 
+'''
+The main site refers to all the pension funds the company offers
+to make the code more efficient, we will scrape the main site once and save the links in a file.
+the file will be used in the future to avoid scraping the main site again and again
+'''
+
+
 def sites_to_scrape():
     # Try to load links from file
     cached_links = load_links_from_file()
     if cached_links:
         return cached_links
 
+    counter = 0
     # If no cached links, scrape the website
     url = "https://www.as-invest.co.il/interstedin/קרנות-פנסיה/קרנות-הפנסיה-שלנו/"
     response = requests.get(url)
@@ -65,11 +73,16 @@ def sites_to_scrape():
                             "כללית" not in title and "כללית" not in text):
                         full_url = f"https://www.as-invest.co.il{href}"
                         pension_links.append((full_url, title or text))
+                        counter += 1
+        if counter == 11:
+            break
+
 
     # Save the new links to file
     save_links_to_file(pension_links)
 
     return pension_links
+
 
 class AltshulerShahamPensionScraper(PensionScraperInterface):
     def scrape(self):
@@ -102,7 +115,7 @@ class AltshulerShahamPensionScraper(PensionScraperInterface):
                         number = li.find("div", class_="number")
                         text = li.find("p", class_="text")
                         if number and text:
-                            number_text = number.text.strip().rstrip('%')
+                            number_text = number.text.strip()
                             text_content = text.text.strip()
 
                             if "תשואה מצטברת" in text_content:
